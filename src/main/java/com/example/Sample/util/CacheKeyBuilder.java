@@ -1,11 +1,10 @@
 package com.example.Sample.util;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 public class CacheKeyBuilder {
-    private Map<String, String> headers = new TreeMap<>();
-    private Map<String, String> requestParams =new TreeMap<>();
+    private Map<String, String> headers;
+    private Map<String, String> requestParams;
     private Object requestBody;
 
     public Map<String, String> getHeaders() {
@@ -30,6 +29,15 @@ public class CacheKeyBuilder {
 
     public void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
+    }
+
+    @Override
+    public String toString() {
+        return "CacheKeyBuilder{" +
+                "headers=" + headers +
+                ", requestParams=" + requestParams +
+                ", requestBody=" + requestBody +
+                '}';
     }
 }
 

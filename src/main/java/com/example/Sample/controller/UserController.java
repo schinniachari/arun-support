@@ -31,6 +31,8 @@ public class UserController {
         User user = httpEntity.getBody();
         System.out.println(httpServletRequest.getRequestURI());
         System.out.println(httpServletRequest.getRequestURL());
+        System.out.println(requestParams);
+        System.out.println(headers);
         userService.saveUser(user, requestParams, headers, httpServletRequest.getRequestURL());
 //        UserPayload userPayload = new UserPayload();
 //        userPayload.setUrl(String.valueOf(httpServletRequest.getRequestURL()));
