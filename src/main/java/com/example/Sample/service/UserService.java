@@ -23,8 +23,8 @@ public class UserService implements IUserService {
 
     @Value("${accepted.headers}")
     private String acceptedHeaders;
-    @Value("${accepted.tokens}")
-    private String acceptedTokens;
+    @Value("${accepted.reqParams}")
+    private String acceptedRequestParams;
 
     @Override
     public User saveUser(User user, Map<String, String> requestParams,
@@ -51,10 +51,10 @@ public class UserService implements IUserService {
         }
 
         System.out.println(acceptedHeaders);
-        System.out.println(acceptedTokens);
+        System.out.println(acceptedRequestParams);
         //sort the request params
         Map<String, String> sortedRequestParams = new TreeMap<>();
-        List<String> reqParamList = Arrays.asList(acceptedTokens.split(","));
+        List<String> reqParamList = Arrays.asList(acceptedRequestParams.split(","));
 
         reqParamList.forEach((reqParam) -> {
             String paramValue = requestParams.get(reqParam);
