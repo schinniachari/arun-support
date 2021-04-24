@@ -33,7 +33,7 @@ public class UserController {
         System.out.println(httpServletRequest.getRequestURL());
         System.out.println(requestParams);
         System.out.println(headers);
-        userService.saveUser(user, requestParams, headers, httpServletRequest.getRequestURL());
+        userService.saveUser(user, requestParams, headers, httpServletRequest.getRequestURI());
 //        UserPayload userPayload = new UserPayload();
 //        userPayload.setUrl(String.valueOf(httpServletRequest.getRequestURL()));
 //        userPayload.setQueryParams(requestParams);

@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface IUserService {
 
-    User saveUser(User user, Map<String, String> requestParams, MultiValueMap<String, String> headers, StringBuffer requestURL) throws JsonProcessingException;
+    User saveUser(User user, Map<String, String> requestParams, MultiValueMap<String, String> headers, String requestURL) throws JsonProcessingException;
 }

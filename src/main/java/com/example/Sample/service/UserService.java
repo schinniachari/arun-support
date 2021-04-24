@@ -28,13 +28,25 @@ public class UserService implements IUserService {
 
     @Override
     public User saveUser(User user, Map<String, String> requestParams,
-                         MultiValueMap<String, String> headers, StringBuffer requestURL) throws JsonProcessingException {
+                         MultiValueMap<String, String> headers, String requestURI) throws JsonProcessingException {
         CacheKeyBuilder cacheKey = createCacheKey(user, requestParams, headers);
         ObjectMapper objectMapper = new ObjectMapper();
         String userString = objectMapper.writeValueAsString(cacheKey);
-        //Append the URL to the above string
+        //Append the Resource Name and Id  to the above string
+        userString=userString+getResourceNameAndId(requestURI);
         userRepository.save(user);
         return user;
+    }
+/** For input app/v1/1 output= app1
+ *              app/1          app1     **/
+    private String getResourceNameAndId(String requestURI) {
+        if (requestURI != null) {
+            String[] array = requestURI.split("/");
+            String resourceName = array[0];
+            String resourceId = array[array.length-1];
+            return resourceName + resourceId;
+        }
+        return "";
     }
 
     private CacheKeyBuilder createCacheKey(User u,
