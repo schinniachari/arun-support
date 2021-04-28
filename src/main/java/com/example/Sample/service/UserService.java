@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,9 @@ public class UserService implements IUserService {
         String cacheKeyJson = objectMapper.writeValueAsString(cacheKey);
         //Append the Resource Name and Id  to the above string
         cacheKeyJson = cacheKeyJson + getResourceNameAndId(requestURI);
-        userRepository.save(user);
+
+        Mono<User> monoUser = userRepository.save(user);
+        System.out.println(monoUser);
         return user;
     }
 
