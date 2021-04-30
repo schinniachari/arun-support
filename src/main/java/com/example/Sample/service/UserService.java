@@ -5,6 +5,7 @@ import com.example.Sample.repository.UserRepository;
 import com.example.Sample.util.CacheKeyBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,26 +17,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+
 /**
- * The type User service.
+ * UserService class implements the IUserService, Handles the Business login.
  */
 @Service
+@Slf4j
 public class UserService implements IUserService {
 
-    /**
-     * The User repository.
-     */
     @Autowired(required = true)
     UserRepository userRepository;
 
+    /**
+     * Filter out the Request Headers based on the list provided in this acceptedHeaders
+     */
     @Value("${accepted.headers}")
     private String acceptedHeaders;
+    /**
+     * Filter out the Request Headers based on the list provided in this acceptedHeaders
+     */
     @Value("${accepted.reqParams}")
     private String acceptedRequestParams;
 
+    /**
+     * saveUser(
+     *
+     * @param user,
+     * @param requestParams,
+     * @param headers,
+     * @param requestURI)    Saves the user object into DB
+     * @return
+     * @throws JsonProcessingException
+     */
     @Override
-    public User saveUser(User user, Map<String, String> requestParams,
-                         MultiValueMap<String, String> headers, String requestURI) throws JsonProcessingException {
+    public Mono<User> saveUser(User user, Map<String, String> requestParams,
+                               MultiValueMap<String, String> headers, String requestURI) throws JsonProcessingException {
         CacheKeyBuilder cacheKey = createCacheKey(user, requestParams, headers);
         ObjectMapper objectMapper = new ObjectMapper();
         String cacheKeyJson = objectMapper.writeValueAsString(cacheKey);
@@ -43,14 +59,21 @@ public class UserService implements IUserService {
         cacheKeyJson = cacheKeyJson + getResourceNameAndId(requestURI);
 
         Mono<User> monoUser = userRepository.save(user);
-        System.out.println(monoUser);
-        return user;
+        return monoUser;
     }
 
+
     /**
+     * getResourceNameAndId(
+     * @param requestURI)
+     *
+     * For a particular URI this method will return the ResourceName and the ResourceId
+     * Below are some examples
+     * @return
      * For input app/v1/1 output= app1
      * app/1          app1
-     **/
+     *
+     */
     private String getResourceNameAndId(String requestURI) {
         if (requestURI != null) {
             String[] array = requestURI.split("/");
@@ -61,6 +84,15 @@ public class UserService implements IUserService {
         return "";
     }
 
+    /**
+     * createCacheKey
+     * @param user,
+     * @param requestParams,
+     * @param requestHeaders)
+     * Builds the CacheKeyBuilder based on the RequestParams, RequestHeaders and RequestBody.
+     *
+     * @return
+     */
     private CacheKeyBuilder createCacheKey(User user,
                                            Map<String, String> requestParams,
                                            MultiValueMap<String, String> requestHeaders) {
@@ -73,8 +105,8 @@ public class UserService implements IUserService {
             }
         }
 
-        System.out.println("acceptedHeaders -> " + acceptedHeaders);
-        System.out.println("acceptedRequestParams -> " + acceptedRequestParams);
+        log.info("acceptedHeaders -> " + acceptedHeaders);
+        log.info("acceptedRequestParams -> " + acceptedRequestParams);
 
         Map<String, String> filteredRequestParams = new TreeMap<>();
         List<String> acceptedRequestParamsList = Arrays.asList(acceptedRequestParams.split(","));
@@ -89,7 +121,7 @@ public class UserService implements IUserService {
         cacheKeyBuilder.setHeaders(filteredHeaders);
         cacheKeyBuilder.setRequestParams(filteredRequestParams);
         cacheKeyBuilder.setRequestBody(user);
-        System.out.println("CacheKeyBuilder == " + cacheKeyBuilder);
+        log.info("CacheKeyBuilder -> " + cacheKeyBuilder);
         return cacheKeyBuilder;
     }
 
